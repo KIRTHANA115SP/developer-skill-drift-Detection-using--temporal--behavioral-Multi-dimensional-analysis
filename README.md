@@ -1,138 +1,336 @@
-# Developer Skill Drift Detection — v0.7
+# DevDrift
+### Developer Skill Drift Detection Using Multi-Dimensional Temporal Behavioral Analysis
 
-A temporal developer-analytics prototype that converts observable GitHub behavior into category-specific time-series signals, personalized drift detection, predictive forecasting, and adaptive micro-learning recommendations.
+**DevDrift** is a developer-analytics platform designed to identify changes in developer-related behavioural patterns over time. It analyses repository activity, compares category-specific signals against historical baselines, detects potential negative drift, classifies behavioural trajectories, and generates predictive insights and targeted learning recommendations.
 
-## Core capabilities
+Rather than treating developer activity as a single score, DevDrift examines five dimensions independently:
 
-- GitHub commits / pull requests / issues ingestion
-- Five skill-related behavioral dimensions: Security, Testing, Concurrency, Documentation, Performance
-- Personalized historical baseline and adaptive drift index (MSDI)
-- CUSUM-style sustained-shift evidence with tunable sensitivity parameters
-- Trajectory classification: stable-low, stable, improving, gradual-decline, rapid-decline
-- 3-period predictive forecast with uncertainty band
-- Team-level analytics across saved analysis runs
-- PDF report generation
-- Algorithm tuning UI
-- Dark mode
-- Skeleton loading states
-- Sparklines in team activity history
-- Explainable detection flow from evidence → features → baseline → drift → recommendation
-- Explicit insufficient-history warning
-- Executive Review Brief with category counts, alert summary, and copyable explanation
-- One-click CSV export of category-level analysis results
-- Presentation / Review Mode that hides the sidebar and expands the dashboard for project demonstrations
-- Multi-profile comparison for 2–5 GitHub contributors in the same repository
-- Contributor discovery through the GitHub REST API, with click-to-add profile chips
-- Side-by-side category signals, alert counts, and event totals for selected profiles
-- Sequential collection to reduce unnecessary API pressure; each profile is saved as a separate analysis run
+- Security
+- Testing
+- Documentation
+- Concurrency
+- Performance
 
-## Run locally
+> **Important:** DevDrift analyses observable repository activity as a proxy for developer-related behaviours. Its outputs are analytical indicators, not definitive measurements of individual competence or performance.
 
-### Backend
+---
+
+## 1. Problem Statement
+
+Traditional developer analytics often focus on static metrics, code quality snapshots, or aggregate productivity indicators. These approaches may overlook gradual changes in specific engineering practices over time.
+
+For example, a developer may maintain consistent overall activity while their testing or documentation practices gradually decline.
+
+DevDrift addresses this challenge by introducing a multi-dimensional temporal analysis approach. It establishes individual historical baselines, monitors changes across behavioural categories, identifies potential negative deviations, and provides recommendations based on detected patterns.
+
+## 2. Key Features
+
+| Feature | Description |
+|---|---|
+| Multi-dimensional analysis | Independently monitors five engineering-related behavioural categories |
+| Temporal feature engineering | Converts repository activity into category-specific time-series signals |
+| Personal baseline modelling | Compares recent observations against historical behaviour |
+| Drift detection | Identifies negative deviations using configurable sensitivity |
+| MSDI-related scoring | Computes category-level drift indicators |
+| Trajectory classification | Classifies patterns such as improving, stable, gradual decline, and rapid decline |
+| Predictive analytics | Generates three-period forecasts from historical trends |
+| Learning recommendations | Suggests targeted micro-learning activities based on detected patterns |
+| Scenario Lab | Demonstrates improving, declining, stable, mixed, and sudden-change scenarios |
+| GitHub integration | Supports repository-based analysis using GitHub data |
+| Historical analytics | Stores analysis runs and supports historical views |
+| Reporting | Supports PDF reports and CSV exports |
+| Interactive dashboard | Provides visual summaries, alerts, trends, and recommendations |
+
+## 3. System Architecture
+
+DevDrift follows a modular, layered architecture.
+
+```text
+             DATA SOURCES
+                   |
+          +--------+--------+
+          |                 |
+      GitHub API        Scenario Lab
+          |                 |
+          +--------+--------+
+                   |
+          DATA COLLECTION
+                   |
+          FEATURE ENGINEERING
+                   |
+       MULTI-DIMENSIONAL SIGNALS
+                   |
+          TEMPORAL ANALYSIS
+                   |
+       +-----------+-----------+
+       |           |           |
+   Baseline     Drift       CUSUM-style
+   Comparison   Scoring     Evidence
+       |           |           |
+       +-----------+-----------+
+                   |
+       TRAJECTORY CLASSIFICATION
+                   |
+          PREDICTIVE ANALYTICS
+                   |
+       RECOMMENDATION ENGINE
+                   |
+          FASTAPI BACKEND
+                   |
+       +-----------+-----------+
+       |                       |
+   React Dashboard         SQLite
+       |                  Persistence
+       |
+  Visualizations, Alerts,
+  Reports and Insights
+```
+
+### Technology Layers
+
+| Layer | Technology | Responsibility |
+|---|---|---|
+| Frontend | React, Vite, JavaScript | Interactive dashboard and visual analytics |
+| Backend | Python, FastAPI | API endpoints and request orchestration |
+| Analytics | Python | Feature extraction, drift scoring, trajectory analysis, and forecasting |
+| Integration | GitHub REST API | Repository activity collection |
+| Persistence | SQLite | Historical analysis records |
+| Reporting | Python PDF generation | Exportable analysis reports |
+
+## 4. Behavioural Dimensions
+
+DevDrift evaluates five categories independently.
+
+| Dimension | Focus |
+|---|---|
+| Security | Security-related engineering practices |
+| Testing | Testing and validation activities |
+| Documentation | Documentation and maintenance practices |
+| Concurrency | Synchronization and concurrency-related practices |
+| Performance | Performance optimization and benchmarking practices |
+
+The resulting signals are intended to represent observable behavioural patterns associated with these dimensions. They should be interpreted in the context of repository size, task type, team practices, and available data.
+
+## 5. Analytical Workflow
+
+1. **Data collection:** Retrieve accessible repository activity or use controlled synthetic scenarios.
+2. **Feature engineering:** Transform collected activity into numerical signals across the five dimensions.
+3. **Baseline comparison:** Establish a historical reference for each category.
+4. **Drift analysis:** Calculate negative deviations and category-level drift indicators.
+5. **Change evidence:** Evaluate CUSUM-style evidence and configured alert conditions.
+6. **Trajectory classification:** Identify the direction and rate of behavioural change.
+7. **Predictive analytics:** Estimate future trends using linear regression.
+8. **Recommendation generation:** Produce category-specific learning suggestions.
+9. **Visualization and persistence:** Present results through the dashboard and retain supported analysis history.
+
+## 6. Technology Stack
+
+- **Frontend:** React, Vite, JavaScript, CSS
+- **Backend:** Python, FastAPI
+- **Data processing:** Python analytical modules
+- **Data integration:** GitHub REST API
+- **Database:** SQLite
+- **Version control:** Git and GitHub
+
+## 7. Project Structure
+
+```text
+developer-skill-drift/
+│
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── demo.py
+│   │   ├── drift.py
+│   │   ├── features.py
+│   │   ├── forecast.py
+│   │   ├── github_client.py
+│   │   ├── main.py
+│   │   ├── models.py
+│   │   ├── report.py
+│   │   └── storage.py
+│   │
+│   ├── tests/
+│   ├── data/
+│   ├── .env.example
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   │   ├── main.jsx
+│   │   └── styles.css
+│   ├── .env.example
+│   ├── index.html
+│   ├── package.json
+│   └── package-lock.json
+│
+├── .gitignore
+└── README.md
+```
+
+## 8. Installation and Setup
+
+### Prerequisites
+
+- Python installed
+- Node.js and npm installed
+- Git installed
+- GitHub account (for repository-based analysis)
+
+### Step 1: Clone the repository
+
+```bash
+git clone https://github.com/KIRTHANA115SP/developer-skill-drift-Detection-using--temporal--behavioral-Multi-dimensional-analysis.git
+
+cd developer-skill-drift-Detection-using--temporal--behavioral-Multi-dimensional-analysis
+```
+
+### Step 2: Configure the backend
+
+Navigate to the backend directory:
+
+```bash
+cd backend
+```
+
+Create a virtual environment:
+
+```bash
+python -m venv .venv
+```
+
+Activate it on Windows PowerShell:
 
 ```powershell
-cd backend
-python -m venv .venv
-.venv\Scripts\activate
+.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
-copy .env.example .env
-# Add GITHUB_TOKEN to backend/.env for GitHub mode
+```
+
+Create your local environment file:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Configure your GitHub token in `backend/.env` if using authenticated GitHub analysis:
+
+```env
+GITHUB_TOKEN=your_github_token_here
+```
+
+Start the backend:
+
+```bash
 uvicorn app.main:app --reload
 ```
 
-Backend: `http://127.0.0.1:8000`
-Swagger: `http://127.0.0.1:8000/docs`
+### Step 3: Configure the frontend
 
-### Frontend
+Open a second terminal and navigate to the project root:
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create the frontend environment file:
 
 ```powershell
-cd frontend
-npm install
+Copy-Item .env.example .env
+```
+
+The example configuration uses:
+
+```env
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+Start the frontend:
+
+```bash
 npm run dev
 ```
 
-Frontend: `http://localhost:5173`
+Open the local URL displayed by Vite in your browser.
 
-## API
+**Note:** Run the backend and frontend in separate terminals. If your application configuration uses different startup commands or environment variables, follow the corresponding project files.
 
-- `GET /api/health`
-- `GET /api/github/contributors?owner=OWNER&repo=REPO&limit=20`
-- `POST /api/analyze`
-- `GET /api/overview`
-- `GET /api/history?limit=100`
-- `GET /api/alerts?limit=100`
-- `POST /api/report`
+## 9. Operating Modes
 
-## GitHub setup
+### Scenario Lab
 
-1. For public repositories, a token is optional; anonymous GitHub API access has lower limits. A fine-grained personal access token is recommended for predictable rate limits and is required to access private repositories you are authorized to inspect. Grant only the read access needed for the repositories you intend to analyse.
-2. Copy `backend/.env.example` to `backend/.env`.
-3. Add `GITHUB_TOKEN=your_token_here` to `backend/.env` when you have a token. Public-repository mode can run without it. Never paste the token into the frontend or commit it to source control.
-4. Restart FastAPI, select GitHub mode, enter the repository owner and name, and analyse a username. For multi-profile comparison, use **Load contributors** or enter 2–5 usernames separated by commas.
+Scenario Lab provides controlled synthetic scenarios for exploring the analytical workflow without requiring external repository access.
 
-The collector analyses activity visible through the GitHub REST API. Private repository access depends on the token's repository selection and permissions. GitHub applies rate limits; the app compares profiles sequentially to reduce avoidable request bursts. See the [GitHub REST API rate-limit documentation](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api).
+Available scenarios include:
 
-## Security
+- Mixed showcase
+- Improving
+- Declining
+- Stable
+- Sudden change
 
-Never commit `.env` or a real GitHub token. Use `.env.example` as the template.
+These scenarios help demonstrate how the system responds to different temporal patterns.
 
-## Important interpretation note
+### GitHub Mode
 
-The system models **observable repository behavior as skill-related proxy signals**. It does not directly measure a person's human competency. Drift is defined relative to the developer's own historical baseline.
+GitHub mode supports repository-based analysis using accessible GitHub activity and the configured authentication token.
 
-## Multi-profile capstone demo (recommended)
+The availability and completeness of repository information influence the resulting analysis.
 
-1. Start the backend and frontend using the commands above.
-2. Select **GitHub** mode and enter a repository owner and repository name that you are allowed to inspect.
-3. Click **Load contributors**. The app queries the repository's visible contributor list. You can also enter usernames manually.
-4. Select 2–3 profiles for the first demo (up to five are accepted) and click **Compare profiles**. Each profile is analysed separately against the same repository and time window; results are saved as individual runs.
-5. Present the side-by-side category snapshot, then run one profile in the main dashboard and open **Explain detection** for a deeper walkthrough.
+## 10. Testing and Evaluation
 
-### Data and interpretation notes
+The project includes automated backend tests covering:
 
-- Real GitHub analysis requires reachable `api.github.com`. Configure `GITHUB_TOKEN` in `backend/.env` if needed for authenticated access or private repositories.
-- Use a least-privilege token with read access only to repositories that you are authorized to analyse. Never expose the token in frontend code or commit it.
-- The contributor endpoint reports contributors GitHub exposes for that repository; it does not guarantee that every contributor has enough recent activity for a stable baseline.
-- The multi-profile view compares activity-derived proxy signals. It is not a leaderboard and must not be described as a direct ranking of developer skill.
-- GitHub REST API requests are rate-limited. Use a small number of profiles during the review, and handle rate-limit or permission errors by checking the repository, token scope, and GitHub API response.
+- Sparse-data handling and evaluation behaviour
+- Analysis history storage
+- Historical record retrieval
 
-## v0.6 practical workflow additions
+Synthetic scenarios are also used to inspect the behaviour of the analytical pipeline under controlled conditions.
 
-- **Action Planner:** converts current category-level analysis into a small prioritized improvement sprint, with completion checkboxes saved in the browser.
-- **Experiment Lab:** reruns the same selected data source with an alternate sensitivity value and compares category MSDI/alert changes. This is a sensitivity experiment, not a claim that a threshold is objectively optimal.
-- **Data Quality:** surfaces checks for source identification, event volume, temporal coverage, category-series availability, forecast caveats, and proxy limitations.
-- **Configurable history window:** choose 4, 8, 12, or 24 weeks for the primary analysis and multi-profile comparisons.
-- **Responsible-use language:** emphasizes that low activity is not proof of low skill and the prototype should not be used as the sole basis for employment decisions.
+Synthetic scenario results demonstrate functional behaviour; they do not establish real-world predictive validity or prove that repository signals accurately measure developer competence.
 
-The frontend build could not be verified in this environment because Vite was unavailable after the dependency-install attempt timed out. Run `npm install` in `frontend/` and then `npm run build` locally before presenting. Python backend syntax validation passed.
+## 11. Limitations and Future Scope
 
+### Current Limitations
 
-## v0.6.1 startup fix
+- Repository activity is an incomplete proxy for actual engineering skills.
+- Sparse or inconsistent repository data can affect signal quality.
+- Synthetic scenarios cannot substitute for validation using real-world labelled observations.
+- Forecasts based on linear regression may not capture complex behavioural changes.
+- Alert thresholds and analytical parameters require further calibration.
+- The current prototype is intended for local development and academic demonstration.
 
-- Fixed missing React state initialization for the Action Planner and Experiment Lab that could crash the app during its first render.
-- Added a frontend error boundary so future render errors display a readable error message instead of a silent blank page.
-- If the app still fails to start, open the browser Console (F12) and check the terminal where `npm run dev` is running. Confirm `npm install` completes successfully.
+### Future Enhancements
 
+- Validation using larger real-world repository datasets.
+- Comparative evaluation of alternative temporal drift-detection algorithms.
+- Improved adaptive threshold calibration.
+- More robust forecasting models.
+- Expanded recommendation intelligence.
+- Team-level behavioural analytics.
+- Stronger authentication, access control, and deployment security.
+- Evaluation using suitable labelled outcomes and forecasting error metrics.
 
-## v0.7 real-time operations features
+## 12. Author
 
-- **Live Monitor:** polls the API health endpoint every 10 seconds and shows GitHub token configuration, last analysis, saved snapshots, event count, and historical alert count.
-- **Scheduled refresh:** opt-in browser-tab scheduler for periodic re-analysis every 1, 5, or 15 minutes. Keep the browser tab and API running; this is not a server-side daemon. GitHub-mode refreshes consume API quota.
-- **Persistent Run History:** full analysis payloads are stored in SQLite; restore an earlier run without re-running collection; filter and export run history to CSV.
-- **Historical Alert Inbox:** browse alerts across saved runs, inspect evidence, open the originating run, and acknowledge/reopen alerts. Acknowledgments are stored in the current browser's local storage.
-- **API endpoints:** `GET /api/history?limit=100` and `GET /api/alerts?limit=100`. The storage layer migrates older databases by adding a nullable snapshot column; older rows remain visible with limited metadata.
-- **Configurable API base URL:** set `VITE_API_URL` in a frontend `.env` file if the backend is hosted somewhere other than `http://127.0.0.1:8000`.
+**Kirthana SP**  
+Integrated M.Tech. Software Engineering  
+Vellore Institute of Technology (VIT), Vellore, India
 
-### Live-monitoring behavior
+---
 
-The health indicator checks connectivity every ten seconds. Scheduled analysis is opt-in and runs inside the browser session while the tab is open; it does not continue after the browser closes. Prefer 5 or 15 minute intervals for GitHub mode to avoid unnecessary requests. Synthetic demo mode does not require a GitHub token.
+### Project
 
+**DevDrift — Developer Skill Drift Detection Using Multi-Dimensional Temporal Behavioral Analysis**
 
-## v0.8 Sparse Data Mode and Evaluation
-
-- The synthetic demonstration mode is now named **Scenario Lab** and includes Mixed showcase, Improving, Declining, Stable, and Sudden change patterns. These are labelled synthetic histories, never real developer data.
-- GitHub analyses report per-source coverage and enforce a minimum evidence gate: at least 8 events and 4 temporal observations are required before real-data drift inference is shown. Sparse runs keep the collected counts and explain why classifications/forecasts were suppressed.
-- **Algorithm Evaluation** runs a small, deterministic labelled synthetic benchmark and reports precision, recall, false-positive rate, accuracy, and case-level expected/detected alerts. The UI and API explicitly warn that four synthetic cases are not evidence of real-world performance.
-- **Data Quality** now shows observed counts for commits, pull requests, issues, and review corrections. Missing sources are described as unavailable evidence, not negative behavior.
-
-The backend evaluation endpoint is `GET /api/evaluation`. The analysis request accepts `scenario` values `mixed`, `improving`, `declining`, `stable`, and `sudden_change`.
+*Turning repository activity into temporal insights for continuous engineering improvement.*
